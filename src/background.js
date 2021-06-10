@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -13,7 +13,7 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 432,
+    width: 460,
     height: 600,
     webPreferences: {
 
@@ -63,6 +63,7 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+  initWindowMenu()
 })
 
 // Exit cleanly on request from parent process in development mode.
@@ -78,4 +79,22 @@ if (isDevelopment) {
       app.quit()
     })
   }
+}
+
+// メニューバーをカスタマイズ
+function initWindowMenu () {
+  const template = [
+    {
+      label: 'ヘルプ',
+      submenu: [
+        {
+          label: '更新情報',
+          click () {  }
+        }
+      ]
+    }
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 }

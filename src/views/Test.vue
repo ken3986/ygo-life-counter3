@@ -1,13 +1,14 @@
 <template>
   <div class="page-wrapper">
     <!-- ページヘッダー -->
-    <div class="page-header my-4">
+    <!-- <div class="page-header my-4">
       <div class="container">
         <h1 class="page-title">Life Counter</h1>
       </div>
-    </div>
+    </div> -->
 
-    <div class="page-content mb-4">
+    <!-- ページボディ -->
+    <div class="page-body my-4">
       <section class="life-counter">
         <div class="container">
           <div class="row mb-2">
@@ -18,7 +19,7 @@
                 <!-- プレイヤー名 -->
                 <input type="text" class="form-control mb-2" v-model="player(1).name">
                 <!-- ライフポイント -->
-                <input type="text" :value="player(1).lifePoint" class="form-control text-center text-danger" inputmode="numeric">
+                <input type="text" :value="player(1).lifePoint" class="lifePoint1 tt-digital form-control text-center" inputmode="numeric">
               </div>
             </div>
 
@@ -34,7 +35,7 @@
                 <!-- プレイヤー名 -->
                 <input type="text" class="form-control mb-2" v-model="player(2).name">
                 <!-- ライフポイント -->
-                <input type="text" :value="player(2).lifePoint" class="form-control text-center text-primary" inputmode="numeric">
+                <input type="text" :value="player(2).lifePoint" class="lifePoint2 tt-digital form-control text-center" inputmode="numeric">
               </div>
             </div>
           </div>
@@ -102,22 +103,14 @@
                 </div>
               </div>
               <div class="col-6 col-lg-3 order-1 order-lg-0">
-                <!-- log -->
-                <ul class="list-group">
-                  <li class="list-group-item" v-for="log in playerLog(1)" :key="log.id">
-                    {{ log.currentLifePoint }}
-                    {{ log.operator }}{{ log.changeLifePoint }}
-                  </li>
-                </ul>
+                <!-- <Logs
+                  :logs="playerLog(1)"
+                ></Logs> -->
               </div>
               <div class="col-6 col-lg-3 order-2 order-lg-2">
-                <!-- log -->
-                <!-- <ul class="list-group">
-                  <li class="list-group-item" v-for="log in playerLog(2)" :key="log.id">
-                    {{ log.currentLifePoint }}
-                    {{ log.operator }}{{ log.changeLifePoint }}
-                  </li>
-                </ul> -->
+                <!-- <Logs
+                  :logs="playerLog(2)"
+                ></Logs> -->
               </div>
             </div>
           </div> <!-- numbers -->
@@ -125,21 +118,28 @@
       </section>
 
       <!-- デバック用 -->
-      <!-- <section>
+      <section>
         <div class="container">
-          <h2>デバックエリア</h2>
+          <!-- <h2>デバックエリア</h2>
+          <img src="@/assets/img/2_3r.png" alt="">
           {{ logs }}
-          <p>{{ playerLog(1) }}</p>
+          <p>{{ playerLog(1) }}</p> -->
         </div>
-      </section> -->
+      </section>
     </div> <!-- .page-content -->
   </div> <!-- .pge-wrapper -->
 </template>
 
 
 <script>
+// import Logs from '@/components/Logs.vue'
+
 export default {
   name: 'life-counter',
+
+  components: {
+    // Logs,
+  }, /* components */
 
   data () {
     return {
@@ -282,6 +282,41 @@ export default {
 
 
 <style>
+body {
+  background-color: #eee !important;
+}
 
+.life-counter {
+  min-width: 440px;
+}
+
+@font-face {
+  font-family: 'tt-digital';
+  src: url('~@/assets/fonts/tt-digital.ttf');
+}
+.tt-digital {
+  font-family: 'tt-digital';
+  color: #fff !important;
+  text-shadow:  2px  2px 3px green ,
+               -2px  2px 3px green ,
+                2px -2px 3px green ,
+               -2px -2px 3px green;
+  background-color: #000 !important;
+  letter-spacing: 0.1em;
+  font-size: 30px !important;
+  /* border: 1px double #fff !important; */
+}
+.lifePoint1 {
+    text-shadow:  2px  2px 8px crimson ,
+               -2px  2px 8px crimson ,
+                2px -2px 8px crimson ,
+               -2px -2px 8px crimson;
+}
+.lifePoint2 {
+    text-shadow:  2px  2px 8px blue ,
+               -2px  2px 8px blue ,
+                2px -2px 8px blue ,
+               -2px -2px 8px blue;
+}
 </style>
 
