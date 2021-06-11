@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 // import Home from '../views/Home.vue'
 
 import Test from '@/views/Test.vue'
+import Logs from '@/components/Logs.vue'
 
 Vue.use(VueRouter)
 
@@ -24,11 +25,16 @@ const routes = [
     path: '/',
     name: 'Test',
     component: Test
-  }
+  },
+  {
+    path: '/logs',
+    name: 'Logs',
+    component: Logs
+  },
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: process.env.IS_ELECTRON ? 'hash' : 'history',
   base: process.env.BASE_URL,
   routes
 })

@@ -1,5 +1,6 @@
 <template>
   <div>
+    Logs
     <ul class="list-group">
       <li class="list-group-item" v-for="log in logs" :key="log.id">
         {{ log.currentLifePoint }}
@@ -22,7 +23,7 @@ export default {
 
   data () {
     return {
-
+      // logs: this.$route.params.logs
     }
   }, /* data */
 

@@ -70,7 +70,21 @@
             <div class="row">
               <div class="col-12 col-lg-6 order-0 order-lg-1">
                 <div class="row">
-                  <div  v-for="number in numbers.slice(0, 3)" :key="number" class="col-4 d-grid gap-2">
+                  <div class="col-3">
+                    <button>MRC</button>
+                  </div>
+                  <div class="col-3">
+                    <button>M-</button>
+                  </div>
+                  <div class="col-3">
+                    <button>M+</button>
+                  </div>
+                  <div class="col-3">
+                    <button>÷</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div v-for="number in numbers.slice(0, 3)" :key="number" class="col-3 d-grid gap-2">
                     <button
                       class="btn btn-block btn-secondary mb-2"
                       @click="inputNumber(number)"
@@ -78,7 +92,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div v-for="number in numbers.slice(3, 6)" :key="number" class="col-4 d-grid gap-2">
+                  <div v-for="number in numbers.slice(3, 6)" :key="number" class="col-3 d-grid gap-2">
                     <button
                       class="btn btn-block btn-secondary mb-2"
                       @click="inputNumber(number)"
@@ -86,7 +100,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div v-for="number in numbers.slice(6, 9)" :key="number" class="col-4 d-grid gap-2">
+                  <div v-for="number in numbers.slice(6, 9)" :key="number" class="col-3 d-grid gap-2">
                     <button
                       class="btn btn-block btn-secondary mb-2"
                       @click="inputNumber(number)"
@@ -94,7 +108,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div v-for="number in numbers.slice(9, 13)" :key="number" class="col-4 d-grid gap-2">
+                  <div v-for="number in numbers.slice(9, 13)" :key="number" class="col-3 d-grid gap-2">
                     <button
                       class="btn btn-block btn-secondary mb-2"
                       @click="inputNumber(number)"
@@ -121,9 +135,8 @@
       <section>
         <div class="container">
           <!-- <h2>デバックエリア</h2>
-          <img src="@/assets/img/2_3r.png" alt="">
-          {{ logs }}
-          <p>{{ playerLog(1) }}</p> -->
+          {{ logs }} -->
+          <!-- <p>{{ playerLog(1) }}</p> -->
         </div>
       </section>
     </div> <!-- .page-content -->
@@ -152,27 +165,25 @@ export default {
           id: 1,
           name: 'Player1',
           lifePoint: 8000,
-          logs: [],
         },
 
         {
           id: 2,
           name: 'Player2',
           lifePoint: 8000,
-          logs: [],
         }
       ],
 
       numbers: [
-        '1',
-        '2',
-        '3',
-        '4',
-        '5',
-        '6',
         '7',
         '8',
         '9',
+        '4',
+        '5',
+        '6',
+        '1',
+        '2',
+        '3',
         '0',
         '00',
         '000',
@@ -226,24 +237,46 @@ export default {
       const inputLifePoint = parseInt(this.inputLifePoint)
 
       if (inputLifePoint !== 0) {
+        const from = player.lifePoint
+        let to = 0
+        const startTime = Date.now()
+
         if (operator === '+') {
-          player.lifePoint = player.lifePoint + inputLifePoint
+          to = player.lifePoint + inputLifePoint
         }
-        else if (operator === '-') {
-          player.lifePoint = player.lifePoint - inputLifePoint
+        else {
+          to = player.lifePoint - inputLifePoint
           // if (player.lifePoint <= 0) {
           //   player.lifePoint = 0
           // }
         }
 
-        this.logs.push({
+        // 結果表示までの時間
+        const duration = 600
+
+        const timer = setInterval(() => {
+          const elapsedTime = Date.now() - startTime
+          const progress = elapsedTime / duration
+
+          if (progress < 1) {
+            player.lifePoint = Math.floor(from + progress * (to - from))
+          } else {
+            player.lifePoint = to
+            clearInterval(timer)
+          }
+        })
+
+        // ログに出力
+        const log = {
           id: this.currentLogId,
           playerId: playerId,
           previousLifePoint: previousLifePoint,
           changeLifePoint: inputLifePoint,
           operator: operator,
           currentLifePoint: player.lifePoint,
-        })
+        }
+        this.logs.push(log)
+        // this.$store.commit('addLog', log)
         this.currentLogId++
       }
 
@@ -273,8 +306,9 @@ export default {
         }
 
         this.logs.pop()
+        // this.$store.commit('removeLog')
       }
-    }
+    },
   }, /* methods */
 
 }
@@ -297,13 +331,9 @@ body {
 .tt-digital {
   font-family: 'tt-digital';
   color: #fff !important;
-  text-shadow:  2px  2px 3px green ,
-               -2px  2px 3px green ,
-                2px -2px 3px green ,
-               -2px -2px 3px green;
   background-color: #000 !important;
   letter-spacing: 0.1em;
-  font-size: 30px !important;
+  font-size: 26px !important;
   /* border: 1px double #fff !important; */
 }
 .lifePoint1 {

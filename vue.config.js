@@ -3,7 +3,7 @@ module.exports = {
     electronBuilder: {
       builderOptions: {
         win: {
-          // icon: 'src/assets/future-architect-vue-cli-electron-sample.png',
+          icon: 'src/assets/img/hoshinowa-mark.png',
           target: [
             {
               target: 'portable',
