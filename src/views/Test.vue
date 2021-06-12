@@ -52,11 +52,12 @@
             </div>
             <!-- 増減値表示 -->
             <div class="col-4">
-              <p v-if="memoryPoint">memory</p>
+              <p v-if="memoryPoint">M{{ memoryPoint }}</p>
               <!-- <p v-if="logs.length">{{ logs[logs.length - 1].operator }}{{ logs[logs.length - 1].changeLifePoint }}</p> -->
               <p v-if="totalPoint">{{ totalPoint }}</p>
               <p v-if="operator">{{ operator }}</p>
-              <p class="text-center" @click="inputPoint = 0">{{ inputPoint }}</p>
+              <button @click="clearInputPoint">C</button>
+              <p class="text-center">{{ inputPoint }}</p>
               <!-- <input type="text" class="form-control text-center" inputmode="numeric" v-model.number="inputPoint"> -->
             </div>
             <!-- プレイヤー2・マイナス -->
@@ -69,19 +70,19 @@
             </div>
           </div>
 
-          <!-- 数字キー -->
-          <div class="numbers px-5 text-center">
+          <!-- 計算領域 -->
+          <div class="calculator px-5 text-center">
             <div class="row">
               <div class="col-12 col-lg-6 order-0 order-lg-1">
                 <div class="row">
                   <div class="col-3">
-                    <button>MRC</button>
+                    <button @click="mrc">MRC</button>
                   </div>
                   <div class="col-3">
-                    <button>M-</button>
+                    <button @click="inputMemory('-')">M-</button>
                   </div>
                   <div class="col-3">
-                    <button>M+</button>
+                    <button @click="inputMemory('+')">M+</button>
                   </div>
                   <div class="col-3">
                     <button @click="inputOperator('/')">÷</button>
@@ -172,29 +173,24 @@ export default {
 
   data () {
     return {
-      message: 'testMessage',
-
       inputPoint: 0,
       totalPoint: 0,
-      operator: '+',
+      operator: '',
 
-      /**
+      /** 最後に押されたキーの種類
        * 0: 数値
        * 1: 演算子
        * 2: =
        */
-      lastInputKey: 0,
+      lastInputButton: 0,
 
       lastCalc: {
         operator: '+',
         value: 0
       },
 
-      lastInputIsEqual: false,
-      waitNewInput: false,
-      calculated: false,
-
       memoryPoint: 0,
+      mr: true,
 
       players: [
         {
@@ -262,83 +258,46 @@ export default {
     resetLifePoints () {
       this.players.forEach((player) => {
         player.lifePoint = 8000
-        this.logs =[]
       })
+      this.logs = []
+      this.clearInputPoint()
+    },
+
+    // 計算領域のリセット
+    clearInputPoint () {
       this.inputPoint = 0
-      this.operator = ''
       this.totalPoint = 0
-      this.calculated = false
+      this.memoryPoint = 0
+      this.mr = true
+      this.operator = ''
+      this.lastInputButton = 0
       this.lastCalc.operator = '+'
       this.lastCalc.value = 0
     },
 
-    // calculateInputPoints () {
-    //   this.calculated = false
-    //   if (this.operator === '+') {
-    //     this.totalPoint = this.totalPoint + parseInt(this.inputPoint)
-    //   }
-    //   else if (this.operator === '-') {
-    //     this.totalPoint = this.totalPoint - parseInt(this.inputPoint)
-    //     }
-    //   else if (this.operator === '×') {
-    //     this.totalPoint = this.totalPoint * parseInt(this.inputPoint)
-    //     }
-    //   else if (this.operator === '÷') {
-    //     this.totalPoint = Math.floor(this.totalPoint / parseInt(this.inputPoint))
-    //   }
-    // },
-
-    // 算出記号の変更
-    changeOperator (operator) {
-      if (!this.calculated) {
-        if (this.totalPoint) {
-          this.calculateInputPoints()
-          this.inputPoint = this.totalPoint
-          this.calculated = true
-        }
-      }
-
-      this.operator = operator
-
-      this.waitNewInput = true
-      this.calculated = false
-    },
-
-
-
-    // 数字を入力
+    // 数字ボタンを入力
     inputNumber (number) {
-
-      // 最後に入力されたものが演算子なら入力エリアをクリア
-      if (this.lastInputKey === 1) {
+      // 最後に入力されたものが数値でないなら入力エリアをクリア
+      if (this.lastInputButton !== 0) {
         this.inputPoint = ''
-      } else if (this.lastInputKey === 2) {
-        this.inputPoint = ''
+      }
+      // 最後に入力されたボタンがイコールなら合計値をクリア
+      else if (this.lastInputButton === 2) {
         this.totalPoint = 0
       }
 
-      // 最後に入力されたものを数字と設定
-      this.lastInputKey = 0
-
-      // 0が入っている場合は繋げず入力値をそのまま表示
+      // 0が入っている場合は繋げずに入力値をそのまま表示
       if(this.inputPoint == 0) {
         this.inputPoint = ''
       }
-
-      if (this.waitNewInput) {
-        if (!this.calculated) {
-          this.totalPoint = parseInt(this.inputPoint)
-        }
-        this.inputPoint = ''
-      }
-
       // 数字を連結
       this.inputPoint += number
 
+      // 計算待ち数値を設定
       this.lastCalc.value = parseInt(this.inputPoint)
 
-      // this.waitNewInput = false
-      // this.calculated = false
+      // 最後に入力されたボタンを数字と設定
+      this.lastInputButton = 0
     },
 
     // 計算式として解釈する関数
@@ -348,56 +307,59 @@ export default {
 
     // 演算子ボタンの挙動
     inputOperator (operator) {
-      if (this.lastInputKey === 0) {
-        const total = this.calculate(this.totalPoint, this.lastCalc.operator, this.lastCalc.value)()
-        // this.inputPoint = total
-        this.totalPoint = total
-        this.lastCalc.value = this.inputPoint
+      // 最後に入力されたボタンが数字なら
+      if (this.lastInputButton === 0) {
+        // 0除算を回避
+        if (this.lastCalc.operator === '/' && this.lastCalc.value === 0) {
+          console.log('Error')
+          return
+        }
+        // 合計値を計算
+        this.totalPoint = this.calculate(this.totalPoint, this.lastCalc.operator, parseInt(this.lastCalc.value))()
+        // 計算待ち数値を設定
+        this.lastCalc.value = parseInt(this.inputPoint)
+      }
+      // 最後に入力されたボタンがイコールなら
+      else if (this.lastInputButton === 2) {
+        // 現在の入力値を合計値に保管
+        this.totalPoint = parseInt(this.inputPoint)
       }
 
-      if (this.lastInputKey === 2) {
-        this.totalPoint = this.inputPoint
-      }
-
+      // 表示演算子を設定
       this.operator = operator
+      // 計算待ち演算子を設定
       this.lastCalc.operator = operator
 
-      this.lastInputKey = 1
-      // // 最後に入力されたものが数値である場合
-      // if (this.lastInputKey === 0 || this.lastInputKey === 2) {
-      //   // 最後に入力されたものを演算子と設定
-      //   this.lastInputKey = 1
-
-      //   // 現在値と入力値を合算
-      //   const total = this.calculate(this.totalPoint, this.operator, parseInt(this.inputPoint))()
-      //   this.totalPoint = total
-      //   this.inputPoint = this.totalPoint
-      // }
-
-      // if (operator === '=') {
-      //   // this.totalPoint = 0
-      //   this.operator = '+'
-      //   this.lastInputKey = 2
-      // } else {
-      //   // 演算子を変更
-      //   this.operator = operator
-      // }
+      // 最後に入力したボタンを演算子と設定
+      this.lastInputButton = 1
     },
 
     // イコールボタンの挙動
     equal () {
-      if (this.lastInputKey === 2) {
+      // 最後に入力されたボタンがイコールなら
+      if (this.lastInputButton === 2) {
         this.totalPoint = this.inputPoint
       }
-      this.inputPoint = this.calculate(this.totalPoint, this.lastCalc.operator, this.lastCalc.value)()
-        // this.operator = '+'
-        this.lastInputKey = 2
-      // this.calculateInputPoints()
-      // this.inputPoint = this.totalPoint
-      // this.calculated = true
-      // this.operator = ''
-      // this.waitNewInput = true
-      // this.totalPoint = 0
+      // 合計値を計算して表示
+      this.inputPoint = this.calculate(this.totalPoint, this.lastCalc.operator, parseInt(this.lastCalc.value))()
+      // 最後に入力されたボタンをイコールと設定
+      this.lastInputButton = 2
+    },
+
+    // メモリーボタンの挙動
+    inputMemory (operator) {
+      this.memoryPoint = this.calculate(this.memoryPoint, operator, this.inputPoint)()
+      this.lastInputButton = 1
+    },
+    // MRCボタンの挙動
+    mrc () {
+      if (this.mr) {
+        this.inputPoint = this.memoryPoint
+      } else {
+        this.memoryPoint = 0
+      }
+      this.lastInputButton = 1
+      this.mr = !this.mr
     },
 
     // ライフポイントの増減
