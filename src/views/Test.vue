@@ -52,8 +52,12 @@
             </div>
             <!-- 増減値表示 -->
             <div class="col-4">
-              <p class="text-center" @click="inputLifePoint = 0">{{ inputLifePoint }}</p>
-              <!-- <input type="text" class="form-control text-center" inputmode="numeric" v-model.number="inputLifePoint"> -->
+              <p v-if="memoryPoint">memory</p>
+              <!-- <p v-if="logs.length">{{ logs[logs.length - 1].operator }}{{ logs[logs.length - 1].changeLifePoint }}</p> -->
+              <p v-if="totalPoint">{{ totalPoint }}</p>
+              <p v-if="operator">{{ operator }}</p>
+              <p class="text-center" @click="inputPoint = 0">{{ inputPoint }}</p>
+              <!-- <input type="text" class="form-control text-center" inputmode="numeric" v-model.number="inputPoint"> -->
             </div>
             <!-- プレイヤー2・マイナス -->
             <div class="col-2 text-center">
@@ -80,7 +84,7 @@
                     <button>M+</button>
                   </div>
                   <div class="col-3">
-                    <button>÷</button>
+                    <button @click="inputOperator('/')">÷</button>
                   </div>
                 </div>
                 <div class="row">
@@ -90,6 +94,9 @@
                       @click="inputNumber(number)"
                     >{{ number }}</button>
                   </div>
+                  <div>
+                    <button @click="inputOperator('*')">×</button>
+                  </div>
                 </div>
                 <div class="row">
                   <div v-for="number in numbers.slice(3, 6)" :key="number" class="col-3 d-grid gap-2">
@@ -97,6 +104,9 @@
                       class="btn btn-block btn-secondary mb-2"
                       @click="inputNumber(number)"
                     >{{ number }}</button>
+                  </div>
+                  <div>
+                    <button @click="inputOperator('-')">-</button>
                   </div>
                 </div>
                 <div class="row">
@@ -106,6 +116,9 @@
                       @click="inputNumber(number)"
                     >{{ number }}</button>
                   </div>
+                  <div>
+                    <button @click="inputOperator('+')">+</button>
+                  </div>
                 </div>
                 <div class="row">
                   <div v-for="number in numbers.slice(9, 13)" :key="number" class="col-3 d-grid gap-2">
@@ -113,6 +126,9 @@
                       class="btn btn-block btn-secondary mb-2"
                       @click="inputNumber(number)"
                     >{{ number }}</button>
+                  </div>
+                  <div>
+                    <button @click="equal">=</button>
                   </div>
                 </div>
               </div>
@@ -158,7 +174,27 @@ export default {
     return {
       message: 'testMessage',
 
-      inputLifePoint: 0,
+      inputPoint: 0,
+      totalPoint: 0,
+      operator: '+',
+
+      /**
+       * 0: 数値
+       * 1: 演算子
+       * 2: =
+       */
+      lastInputKey: 0,
+
+      lastCalc: {
+        operator: '+',
+        value: 0
+      },
+
+      lastInputIsEqual: false,
+      waitNewInput: false,
+      calculated: false,
+
+      memoryPoint: 0,
 
       players: [
         {
@@ -228,24 +264,158 @@ export default {
         player.lifePoint = 8000
         this.logs =[]
       })
+      this.inputPoint = 0
+      this.operator = ''
+      this.totalPoint = 0
+      this.calculated = false
+      this.lastCalc.operator = '+'
+      this.lastCalc.value = 0
+    },
+
+    // calculateInputPoints () {
+    //   this.calculated = false
+    //   if (this.operator === '+') {
+    //     this.totalPoint = this.totalPoint + parseInt(this.inputPoint)
+    //   }
+    //   else if (this.operator === '-') {
+    //     this.totalPoint = this.totalPoint - parseInt(this.inputPoint)
+    //     }
+    //   else if (this.operator === '×') {
+    //     this.totalPoint = this.totalPoint * parseInt(this.inputPoint)
+    //     }
+    //   else if (this.operator === '÷') {
+    //     this.totalPoint = Math.floor(this.totalPoint / parseInt(this.inputPoint))
+    //   }
+    // },
+
+    // 算出記号の変更
+    changeOperator (operator) {
+      if (!this.calculated) {
+        if (this.totalPoint) {
+          this.calculateInputPoints()
+          this.inputPoint = this.totalPoint
+          this.calculated = true
+        }
+      }
+
+      this.operator = operator
+
+      this.waitNewInput = true
+      this.calculated = false
+    },
+
+
+
+    // 数字を入力
+    inputNumber (number) {
+
+      // 最後に入力されたものが演算子なら入力エリアをクリア
+      if (this.lastInputKey === 1) {
+        this.inputPoint = ''
+      } else if (this.lastInputKey === 2) {
+        this.inputPoint = ''
+        this.totalPoint = 0
+      }
+
+      // 最後に入力されたものを数字と設定
+      this.lastInputKey = 0
+
+      // 0が入っている場合は繋げず入力値をそのまま表示
+      if(this.inputPoint == 0) {
+        this.inputPoint = ''
+      }
+
+      if (this.waitNewInput) {
+        if (!this.calculated) {
+          this.totalPoint = parseInt(this.inputPoint)
+        }
+        this.inputPoint = ''
+      }
+
+      // 数字を連結
+      this.inputPoint += number
+
+      this.lastCalc.value = parseInt(this.inputPoint)
+
+      // this.waitNewInput = false
+      // this.calculated = false
+    },
+
+    // 計算式として解釈する関数
+    calculate (totalPoint, operator, inputPoint) {
+      return Function('return (' + totalPoint + operator + inputPoint + ')')
+    },
+
+    // 演算子ボタンの挙動
+    inputOperator (operator) {
+      if (this.lastInputKey === 0) {
+        const total = this.calculate(this.totalPoint, this.lastCalc.operator, this.lastCalc.value)()
+        // this.inputPoint = total
+        this.totalPoint = total
+        this.lastCalc.value = this.inputPoint
+      }
+
+      if (this.lastInputKey === 2) {
+        this.totalPoint = this.inputPoint
+      }
+
+      this.operator = operator
+      this.lastCalc.operator = operator
+
+      this.lastInputKey = 1
+      // // 最後に入力されたものが数値である場合
+      // if (this.lastInputKey === 0 || this.lastInputKey === 2) {
+      //   // 最後に入力されたものを演算子と設定
+      //   this.lastInputKey = 1
+
+      //   // 現在値と入力値を合算
+      //   const total = this.calculate(this.totalPoint, this.operator, parseInt(this.inputPoint))()
+      //   this.totalPoint = total
+      //   this.inputPoint = this.totalPoint
+      // }
+
+      // if (operator === '=') {
+      //   // this.totalPoint = 0
+      //   this.operator = '+'
+      //   this.lastInputKey = 2
+      // } else {
+      //   // 演算子を変更
+      //   this.operator = operator
+      // }
+    },
+
+    // イコールボタンの挙動
+    equal () {
+      if (this.lastInputKey === 2) {
+        this.totalPoint = this.inputPoint
+      }
+      this.inputPoint = this.calculate(this.totalPoint, this.lastCalc.operator, this.lastCalc.value)()
+        // this.operator = '+'
+        this.lastInputKey = 2
+      // this.calculateInputPoints()
+      // this.inputPoint = this.totalPoint
+      // this.calculated = true
+      // this.operator = ''
+      // this.waitNewInput = true
+      // this.totalPoint = 0
     },
 
     // ライフポイントの増減
     changeLifePoint (playerId, operator) {
       const player = this.getPlayer(playerId)
       const previousLifePoint = player.lifePoint
-      const inputLifePoint = parseInt(this.inputLifePoint)
+      const inputPoint = parseInt(this.inputPoint)
 
-      if (inputLifePoint !== 0) {
+      if (inputPoint !== 0) {
         const from = player.lifePoint
         let to = 0
         const startTime = Date.now()
 
         if (operator === '+') {
-          to = player.lifePoint + inputLifePoint
+          to = player.lifePoint + inputPoint
         }
         else {
-          to = player.lifePoint - inputLifePoint
+          to = player.lifePoint - inputPoint
           // if (player.lifePoint <= 0) {
           //   player.lifePoint = 0
           // }
@@ -271,7 +441,7 @@ export default {
           id: this.currentLogId,
           playerId: playerId,
           previousLifePoint: previousLifePoint,
-          changeLifePoint: inputLifePoint,
+          changeLifePoint: inputPoint,
           operator: operator,
           currentLifePoint: player.lifePoint,
         }
@@ -280,16 +450,10 @@ export default {
         this.currentLogId++
       }
 
-      this.inputLifePoint = 0
+      this.inputPoint = 0
     },
 
-    // 数字を入力
-    inputNumber (number) {
-      if(this.inputLifePoint == 0) {
-        this.inputLifePoint = ''
-      }
-      this.inputLifePoint = this.inputLifePoint + number
-    },
+
 
     // 1つ戻す
     undoLogs () {
