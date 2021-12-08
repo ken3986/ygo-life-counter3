@@ -1,18 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import Home from '../views/Home.vue'
 
-import Test from '@/views/Test.vue'
 import Logs from '@/components/Logs.vue'
+import Calculator from '@/views/Calculator.vue'
+import Bar from '@/views/Bar.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
   {
     path: '/about',
     name: 'About',
@@ -23,14 +18,19 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Test',
-    component: Test
+    name: 'Calculator',
+    component: Calculator
   },
   {
     path: '/logs',
     name: 'Logs',
     component: Logs
   },
+  {
+    path: '/bar',
+    name: 'Bar',
+    component: Bar
+  }
 ]
 
 const router = new VueRouter({

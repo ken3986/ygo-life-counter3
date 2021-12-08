@@ -90,27 +90,31 @@
           <!-- 計算器領域 -->
           <div class="calculator px-5 text-center">
             <div class="d-flex calculator-row">
+              <button @click="clearInputPoint">C</button>
               <button @click="mrc">MRC</button>
               <button @click="inputMemory('-')">M-</button>
               <button @click="inputMemory('+')">M+</button>
               <button @click="inputOperator('/')">÷</button>
             </div>
             <div class="d-flex calculator-row">
+              <button>test</button>
               <button @click="inputNumber(number)" v-for="number in numbers.slice(0, 3)" :key="number">{{ number }}</button>
               <button @click="inputOperator('*')">×</button>
             </div>
             <div class="d-flex calculator-row">
-
             </div>
             <div class="d-flex calculator-row">
+              <button>test</button>
               <button @click="inputNumber(number)" v-for="number in numbers.slice(3, 6)" :key="number">{{ number }}</button>
               <button @click="inputOperator('-')">-</button>
             </div>
             <div class="d-flex calculator-row">
+              <button>test</button>
               <button @click="inputNumber(number)" v-for="number in numbers.slice(6, 9)" :key="number">{{ number }}</button>
               <button @click="inputOperator('+')">+</button>
             </div>
             <div class="d-flex calculator-row">
+              <button @click="openWindow('Bar')">bar</button>
               <button @click="inputNumber(number)" v-for="number in numbers.slice(9, 12)" :key="number" :disabled="dividing">{{ number }}</button>
               <button @click="equal">=</button>
             </div>
@@ -136,7 +140,7 @@
 // import Logs from '@/components/Logs.vue'
 
 export default {
-  name: 'life-counter',
+  name: 'life-calculator',
 
   components: {
     // Logs,
@@ -294,6 +298,10 @@ export default {
 
     // 計算式として解釈する関数
     calculate (totalPoint, operator, inputPoint) {
+      if (!operator) {
+        console.log('エラー：計算演算子が指定されていません。')
+        return
+      }
       return Function('return (' + totalPoint + operator + inputPoint + ')')
     }, /* calculate */
 
@@ -312,7 +320,11 @@ export default {
           return
         }
         // 合計値を計算
-        this.totalPoint = Math.floor(this.calculate(this.totalPoint, this.lastCalc.operator, parseInt(this.lastCalc.value))())
+        if (this.lastCalc.operator) {
+          this.totalPoint = Math.floor(this.calculate(this.totalPoint, this.lastCalc.operator, parseInt(this.lastCalc.value))())
+        } else {
+          this.totalPoint = parseInt(this.lastCalc.value)
+        }
         // 計算待ち数値を設定
         this.lastCalc.value = parseInt(this.inputPoint)
         // 合計値を表示
@@ -406,6 +418,24 @@ export default {
         return
       }
 
+      // ローカルストレージに記録
+      const storageData = JSON.stringify({
+        id: player.id,
+        name: player.name,
+        lifePoint: 7800,
+      })
+      if (localStorage.players) {
+        const players = JSON.parse(localStorage.players)
+        const index = players.findIndex((player) => {
+          player.id === storageData.id
+        })
+        localStorage.players.splice(index, 1, storageData)
+      } else {
+        let storageArray = []
+        storageArray.push(storageData)
+        localStorage.setItem('players', JSON.stringify(storageArray))
+      }
+
       // 結果表示までの時間（ミリ秒）
       const duration = 600
 
@@ -466,6 +496,14 @@ export default {
         // this.$store.commit('removeLog')
       }
     },
+
+    // 別ウィンドウを開く
+    openWindow (name) {
+      const resolveRoute = this.$router.resolve({
+        name: name
+      })
+      window.open(resolveRoute.href, '_blank')
+    }
   }, /* methods */
 
 }
@@ -657,7 +695,7 @@ body {
   }
   button {
     $background-color: rgb(71, 71, 78);
-    flex-basis: 25%;
+    flex-basis: 20%;
     background-color: $background-color;
     color: #fff;
     border-radius: 5%;

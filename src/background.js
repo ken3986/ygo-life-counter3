@@ -14,7 +14,7 @@ async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 460,
-    height: 600,
+    height: 620,
     autoHideMenuBar: true,
     webPreferences: {
 
@@ -86,12 +86,23 @@ if (isDevelopment) {
 function initWindowMenu () {
   const template = [
     {
+      label: '表示',
+      submenu: [
+        {
+          label: 'バー',
+          click () {
+            window.loadURL('')
+          }
+        }
+      ]
+    },
+    {
       label: 'ヘルプ',
       submenu: [
         {
           label: '更新情報',
           click () {  }
-        }
+        },
       ]
     }
   ]
