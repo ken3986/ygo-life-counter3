@@ -45,8 +45,26 @@ export default new Vuex.Store({
       state.logs.push(payload)
     },
 
+    undoLog (state) {
+      state.logs.splice(-1, 1)
+    },
+
     resetLogs (state) {
-      state.logs.splice(-state.logs.length)
+      state.logs.splice(0)
+    },
+
+    saveLogs (state) {
+      const key = 'logs'
+      localStorage.setItem(key, JSON.stringify(state.logs))
+    },
+
+    loadLogs (state) {
+      const key = 'logs'
+      if (localStorage.getItem(key)) {
+        const newValue = JSON.parse(localStorage.getItem(key))
+        state.logs.splice(0)
+        state.logs.splice(0, 0, ...newValue)
+      }
     },
 
     // プレイヤー情報を更新
@@ -86,7 +104,7 @@ export default new Vuex.Store({
           value: targetLog.previousLifePoints,
         })
 
-        state.logs.splice(-1, 1)
+        commit('undoLog')
       }
     }
   },

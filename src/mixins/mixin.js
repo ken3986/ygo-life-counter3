@@ -30,9 +30,9 @@ export default {
 
     // ストレージにデータがある場合はロード
     players.forEach((player) => {
-      if (localStorage.getItem('player' + player.id)) {
+      // if (localStorage.getItem('player' + player.id)) {
         this.$store.commit('loadPlayer', {id: player.id})
-      }
+      // }
     })
 
     // プレイヤーデータを更新したらストレージを更新
@@ -44,6 +44,12 @@ export default {
 
     // ストレージが更新されたらデータをリロード
     window.onstorage = (event) => {
+      // ログをリロード
+      if (event.key == 'logs') {
+        this.$store.commit('loadLogs')
+      }
+
+      // プレイヤー情報をリロード
       const players = this.$store.getters.getPlayers
       players.forEach((player) => {
         if (event.key == ('player' + player.id)) {
@@ -51,6 +57,23 @@ export default {
         }
       })
     }
+
+    // ストレージにログがある場合はロード
+    // if (localStorage.getItem('logs')) {
+      this.$store.commit('loadLogs')
+    // }
+
+    // ログを更新したらストレージを更新
+    this.$store.subscribe((mutation) => {
+      if (
+        mutation.type === 'addLog'
+        || mutation.type === 'resetLogs'
+        || mutation.type === 'undoLog'
+      ) {
+        this.$store.commit('saveLogs')
+      }
+    })
+
   }, /* mounted */
 
   methods: {
@@ -82,12 +105,19 @@ export default {
     // },
 
     // 別ウィンドウを開く
-    openWindow (name) {
+    openWindow (name ,size = { width: 400, height: 400 }) {
       const resolveRoute = this.$router.resolve({
         name: name
       })
-      console.log(resolveRoute.href)
-      window.open(resolveRoute.href, '', 'width=1000, height=100')
+      window.open(resolveRoute.href, '', `width=${size.width}, height=${size.height}`)
+    },
+
+    openBar () {
+      this.openWindow ('Bar', { width: 1000, height: 100 })
+    },
+
+    openLogs () {
+      this.openWindow ('Logs', { width: 400, height: 500 })
     }
   }, /* methods */
 }

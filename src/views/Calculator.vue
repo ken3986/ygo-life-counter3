@@ -114,14 +114,14 @@
             </div>
             <div class="d-flex calculator-row">
               <!-- ログ窓を表示 -->
-              <button @click="openWindow('Logs')">Log</button>
+              <button @click="openLogs()">Log</button>
 
               <button @click="inputNumber(number)" v-for="number in numbers.slice(6, 9)" :key="number">{{ number }}</button>
               <button @click="inputOperator('+')">+</button>
             </div>
             <div class="d-flex calculator-row">
               <!-- 別窓バーを表示 -->
-              <button @click="openWindow('Bar')">Bar</button>
+              <button @click="openBar()">Bar</button>
 
               <button @click="inputNumber(number)" v-for="number in numbers.slice(9, 12)" :key="number" :disabled="dividing">{{ number }}</button>
               <button @click="equal">=</button>

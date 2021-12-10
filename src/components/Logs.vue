@@ -1,6 +1,7 @@
 <template>
   <div>
     Logs
+    <p>{{ logs }}</p>
     <ul class="list-group">
       <li class="list-group-item" v-for="log in logs" :key="log.id">
         {{ log.currentLifePoint }}
@@ -11,12 +12,16 @@
 </template>
 
 <script>
+import Mixin from '@/mixins/mixin'
+
 import {
-  mapGetters,
+  // mapGetters,
 } from 'vuex'
 
 export default {
   name: 'Logs',
+
+  mixins: [Mixin],
 
   props: {
     // logs: {
@@ -32,9 +37,9 @@ export default {
   }, /* data */
 
   computed: {
-    ...mapGetters({
-      logs: 'getLogs'
-    })
+    // ...mapGetters({
+    //   logs: 'getLogs'
+    // })
   }, /* computed */
 
   mounted () {
