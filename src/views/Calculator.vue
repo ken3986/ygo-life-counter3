@@ -17,25 +17,29 @@
               <!-- 左側プレイヤー -->
               <div class="form-group">
                 <!-- プレイヤー名 -->
-                <input type="text" class="playerName form-control mb-2" v-model="player(1).name">
+                <input type="text" class="playerName form-control mb-2" :value="player(1).name" @change="updatePlayer({id:1, key:'name', value:$event.target.value})">
                 <!-- ライフポイント -->
-                <input type="text" :value="player(1).lifePoint" class="lifePoint1 tt-digital form-control text-center" inputmode="numeric">
+                <input type="text" :value="player(1).lifePoints"
+                class="lifePoints1 tt-digital form-control text-center"
+                inputmode="numeric">
               </div>
             </div>
 
             <div class="col-2 text-center">
               <!-- リセットボタン -->
-              <button @click="resetLifePoints" class="btn btn-dark mb-3"><b-icon-arrow-clockwise></b-icon-arrow-clockwise></button>
-              <button @click="undoLogs" class="btn btn-dark"><b-icon-skip-backward></b-icon-skip-backward></button>
+              <button @click="resetPlayers" class="btn btn-dark mb-3"><b-icon-arrow-clockwise></b-icon-arrow-clockwise></button>
+              <button @click="$store.dispatch('undoChange')" class="btn btn-dark"><b-icon-skip-backward></b-icon-skip-backward></button>
             </div>
 
             <div class="col-5">
               <!-- 右側プレイヤー -->
               <div class="form-group">
                 <!-- プレイヤー名 -->
-                <input type="text" class="playerName form-control mb-2" v-model="player(2).name">
+                <input type="text" class="playerName form-control mb-2" :value="player(2).name" @change="updatePlayer({id:2, key:'name', value:$event.target.value})">
                 <!-- ライフポイント -->
-                <input type="text" :value="player(2).lifePoint" class="lifePoint2 tt-digital form-control text-center" inputmode="numeric">
+                <input type="text" :value="player(2).lifePoints"
+                class="lifePoints2 tt-digital form-control text-center"
+                inputmode="numeric">
               </div>
             </div>
           </div>
@@ -46,18 +50,18 @@
 
               <div class="lifeOperator-buttons player1">
                 <!-- プレイヤー1・2分の1 -->
-                <button class="lifeOperator-button lifeOperator-divide" @click="changeLifePoint(1, '/')">&#189;</button>
+                <button class="lifeOperator-button lifeOperator-divide" @click="changeLifePoints(1, '/')">&#189;</button>
                 <!-- プレイヤー1・プラス -->
-                <button class="lifeOperator-button" @click="changeLifePoint(1, '+')">+</button>
+                <button class="lifeOperator-button" @click="changeLifePoints(1, '+')">+</button>
                 <!-- プレイヤー1・マイナス -->
-                <button class="lifeOperator-button" @click="changeLifePoint(1, '-')">-</button>
+                <button class="lifeOperator-button" @click="changeLifePoints(1, '-')">-</button>
               </div>
 
               <!-- 増減値表示 -->
-              <div class="inputPointArea">
-                <div class="inputPointArea-head">
-                  <p class="memoryPoint" :class="{ active: memoryPoint }">M {{ memoryPoint }}</p>
-                  <!-- <p v-if="totalPoint">{{ totalPoint }}</p> -->
+              <div class="inputPointsArea">
+                <div class="inputPointsArea-head">
+                  <p class="memoryPoints" :class="{ active: memoryPoints }">M {{ memoryPoints }}</p>
+                  <!-- <p v-if="totalPoints">{{ totalPoints }}</p> -->
                   <div class="operators">
                     <p class="operator" :class="{ activeOperator: operator=='/' }">÷</p>
                     <p class="operator" :class="{ activeOperator: operator=='*' }">×</p>
@@ -65,21 +69,21 @@
                     <p class="operator" :class="{ activeOperator: operator=='+' }">+</p>
                   </div>
                 </div>
-                <div class="inputPointArea-body">
-                  <button class="clearInputPoint" @click="clearInputPoint">C</button>
-                  <p class="text-right inputPoint">{{ inputPoint }}</p>
+                <div class="inputPointsArea-body">
+                  <button class="clearInputPoints" @click="clearInputPoints">C</button>
+                  <p class="text-right inputPoints">{{ inputPoints }}</p>
                 </div>
-                <!-- <p v-if="logs.length">{{ logs[logs.length - 1].operator }}{{ logs[logs.length - 1].changeLifePoint }}</p> -->
-                <!-- <input type="text" class="form-control text-center" inputmode="numeric" v-model.number="inputPoint"> -->
+                <!-- <p v-if="logs.length">{{ logs[logs.length - 1].operator }}{{ logs[logs.length - 1].changeLifePoints }}</p> -->
+                <!-- <input type="text" class="form-control text-center" inputmode="numeric" v-model.number="inputPoints"> -->
               </div>
 
               <div class="lifeOperator-buttons player2">
                 <!-- プレイヤー2・2分の1 -->
-                <button class="lifeOperator-button lifeOperator-divide" @click="changeLifePoint(2, '/')">&#189;</button>
+                <button class="lifeOperator-button lifeOperator-divide" @click="changeLifePoints(2, '/')">&#189;</button>
                 <!-- プレイヤー2・マイナス -->
-                <button class="lifeOperator-button" @click="changeLifePoint(2, '-')">-</button>
+                <button class="lifeOperator-button" @click="changeLifePoints(2, '-')">-</button>
                 <!-- プレイヤー2・プラス -->
-                <button class="lifeOperator-button" @click="changeLifePoint(2, '+')">+</button>
+                <button class="lifeOperator-button" @click="changeLifePoints(2, '+')">+</button>
               </div>
 
             </div>
@@ -90,31 +94,35 @@
           <!-- 計算器領域 -->
           <div class="calculator px-5 text-center">
             <div class="d-flex calculator-row">
-              <button @click="clearInputPoint">C</button>
+              <button @click="clearInputPoints">C</button>
               <button @click="mrc">MRC</button>
               <button @click="inputMemory('-')">M-</button>
               <button @click="inputMemory('+')">M+</button>
               <button @click="inputOperator('/')">÷</button>
             </div>
             <div class="d-flex calculator-row">
-              <button>test</button>
+              <button></button>
               <button @click="inputNumber(number)" v-for="number in numbers.slice(0, 3)" :key="number">{{ number }}</button>
               <button @click="inputOperator('*')">×</button>
             </div>
             <div class="d-flex calculator-row">
             </div>
             <div class="d-flex calculator-row">
-              <button>test</button>
+              <button></button>
               <button @click="inputNumber(number)" v-for="number in numbers.slice(3, 6)" :key="number">{{ number }}</button>
               <button @click="inputOperator('-')">-</button>
             </div>
             <div class="d-flex calculator-row">
-              <button>test</button>
+              <!-- ログ窓を表示 -->
+              <button @click="openWindow('Logs')">Log</button>
+
               <button @click="inputNumber(number)" v-for="number in numbers.slice(6, 9)" :key="number">{{ number }}</button>
               <button @click="inputOperator('+')">+</button>
             </div>
             <div class="d-flex calculator-row">
-              <button @click="openWindow('Bar')">bar</button>
+              <!-- 別窓バーを表示 -->
+              <button @click="openWindow('Bar')">Bar</button>
+
               <button @click="inputNumber(number)" v-for="number in numbers.slice(9, 12)" :key="number" :disabled="dividing">{{ number }}</button>
               <button @click="equal">=</button>
             </div>
@@ -138,9 +146,16 @@
 
 <script>
 // import Logs from '@/components/Logs.vue'
+import {
+  // mapGetters,
+} from 'vuex'
+
+import Mixin from '@/mixins/mixin'
 
 export default {
   name: 'life-calculator',
+
+  mixins: [Mixin],
 
   components: {
     // Logs,
@@ -148,8 +163,8 @@ export default {
 
   data () {
     return {
-      inputPoint: 0,
-      totalPoint: 0,
+      inputPoints: 0,
+      totalPoints: 0,
       operator: '',
 
       /** 最後に押されたキーの種類
@@ -164,24 +179,10 @@ export default {
         value: 0
       },
 
-      memoryPoint: 0,
+      memoryPoints: 0,
       mr: true,
 
       dividing: false,
-
-      players: [
-        {
-          id: 1,
-          name: 'Player1',
-          lifePoint: 8000,
-        },
-
-        {
-          id: 2,
-          name: 'Player2',
-          lifePoint: 8000,
-        }
-      ],
 
       numbers: [
         '7',
@@ -198,10 +199,9 @@ export default {
         '000',
       ],
 
-      logs: [],
       currentLogId: 0,
 
-      overDamagePoint: {
+      overDamagePoints: {
         playerId: 0,
         value: 0
       },
@@ -209,31 +209,15 @@ export default {
   }, /* data */
 
   computed: {
-    // プレイヤーIDからプレイヤー情報を取得して返す
-    player () {
-      return function (playerId) {
-        const player = this.getPlayer(playerId)
-        return player
-      }
-    },
-
-    // プレイヤーIDからログを取得して返す
-    playerLog () {
-      return function (playerId) {
-        const playerLog = this.logs.filter(log => log.playerId === playerId)
-        return playerLog
-      }
-    },
-
     // 増減値窓を整数化して返す
-    intInputPoint () {
-      return parseInt(this.inputPoint)
+    intInputPoints () {
+      return parseInt(this.inputPoints)
     }
   }, /* computed */
 
   mounted () {
-    console.log(window.outerWidth)
-    console.log(window.outerHeight)
+    console.log('outerWidth:' + window.outerWidth)
+    console.log('outerHeight:' + window.outerHeight)
   },
 
   methods: {
@@ -243,21 +227,37 @@ export default {
       return player
     },
 
-    // 全てリセット
+    // プレイヤー情報をリセット
+    resetPlayers () {
+      this.players.forEach((player) => {
+        this.updatePlayer({
+          id: player.id,
+          key: 'name',
+          value: 'Player' + player.id,
+        })
+      })
+      this.resetLifePoints()
+    },
+
+    // ライフ関連の情報をリセット
     resetLifePoints () {
       this.players.forEach((player) => {
-        player.lifePoint = 8000
+        this.updatePlayer({
+          id: player.id,
+          key: 'lifePoints',
+          value: 8000,
+        })
       })
-      this.overDamagePoint = {playerId: 0, value: 0}
-      this.logs = []
-      this.clearInputPoint()
+      this.overDamagePoints = {playerId: 0, value: 0}
+      this.clearInputPoints()
+      this.$store.commit('resetLogs')
     },
 
     // 計算領域のリセット
-    clearInputPoint () {
-      this.inputPoint = 0
-      this.totalPoint = 0
-      this.memoryPoint = 0
+    clearInputPoints () {
+      this.inputPoints = 0
+      this.totalPoints = 0
+      this.memoryPoints = 0
       this.mr = true
       this.operator = ''
       this.lastInputButton = 0
@@ -270,39 +270,39 @@ export default {
     inputNumber (number) {
       // 最後に入力されたものが数値でないなら入力エリアをクリア
       if (this.lastInputButton !== 0) {
-        this.inputPoint = ''
+        this.inputPoints = ''
       }
       // 最後に入力されたボタンがイコールなら合計値をクリア
       else if (this.lastInputButton === 2) {
-        this.totalPoint = 0
+        this.totalPoints = 0
       }
       // 0が入っている場合は繋げずに入力値をそのまま表示
-      if (this.inputPoint == 0) {
-        this.inputPoint = ''
+      if (this.inputPoints == 0) {
+        this.inputPoints = ''
       }
 
       // 数字を連結
-      this.inputPoint += number
+      this.inputPoints += number
 
       // 連結結果の数値が0なら0を表示（00や000を入力したとき用）
-      if (parseInt(this.inputPoint) === 0) {
-        this.inputPoint = 0
+      if (parseInt(this.inputPoints) === 0) {
+        this.inputPoints = 0
       }
 
       // 計算待ち数値を設定
-      this.lastCalc.value = parseInt(this.inputPoint)
+      this.lastCalc.value = parseInt(this.inputPoints)
 
       // 最後に入力されたボタンを数字と設定
       this.lastInputButton = 0
     }, /* inputNumber */
 
     // 計算式として解釈する関数
-    calculate (totalPoint, operator, inputPoint) {
+    calculate (totalPoints, operator, inputPoints) {
       if (!operator) {
         console.log('エラー：計算演算子が指定されていません。')
         return
       }
-      return Function('return (' + totalPoint + operator + inputPoint + ')')
+      return Function('return (' + totalPoints + operator + inputPoints + ')')
     }, /* calculate */
 
     // 演算子ボタンの挙動
@@ -321,19 +321,19 @@ export default {
         }
         // 合計値を計算
         if (this.lastCalc.operator) {
-          this.totalPoint = Math.floor(this.calculate(this.totalPoint, this.lastCalc.operator, parseInt(this.lastCalc.value))())
+          this.totalPoints = Math.floor(this.calculate(this.totalPoints, this.lastCalc.operator, parseInt(this.lastCalc.value))())
         } else {
-          this.totalPoint = parseInt(this.lastCalc.value)
+          this.totalPoints = parseInt(this.lastCalc.value)
         }
         // 計算待ち数値を設定
-        this.lastCalc.value = parseInt(this.inputPoint)
+        this.lastCalc.value = parseInt(this.inputPoints)
         // 合計値を表示
-        this.inputPoint = this.totalPoint
+        this.inputPoints = this.totalPoints
       }
       // 最後に入力されたボタンがイコールなら
       else if (this.lastInputButton === 2) {
         // 現在の入力値を合計値に保管
-        this.totalPoint = parseInt(this.inputPoint)
+        this.totalPoints = parseInt(this.inputPoints)
       }
 
       // 表示演算子を設定
@@ -350,11 +350,11 @@ export default {
       this.dividing = false
       // 最後に入力されたボタンがイコールなら
       if (this.lastInputButton === 2) {
-        this.totalPoint = this.inputPoint
+        this.totalPoints = this.inputPoints
       }
       if (this.lastCalc.operator) {
         // 合計値を計算して表示
-        this.inputPoint = this.calculate(this.totalPoint, this.lastCalc.operator, parseInt(this.lastCalc.value))()
+        this.inputPoints = this.calculate(this.totalPoints, this.lastCalc.operator, parseInt(this.lastCalc.value))()
       }
       this.operator = ''
       // 最後に入力されたボタンをイコールと設定
@@ -363,77 +363,60 @@ export default {
 
     // メモリーボタンの挙動
     inputMemory (operator) {
-      this.memoryPoint = this.calculate(this.memoryPoint, operator, this.inputPoint)()
+      this.memoryPoints = this.calculate(this.memoryPoints, operator, this.inputPoints)()
       this.lastInputButton = 1
     },
     // MRCボタンの挙動
     mrc () {
       if (this.mr) {
-        this.inputPoint = this.memoryPoint
+        this.inputPoints = this.memoryPoints
       } else {
-        this.memoryPoint = 0
+        this.memoryPoints = 0
       }
       this.lastInputButton = 1
       this.mr = !this.mr
     },
 
     // ライフポイントの増減
-    changeLifePoint (playerId, operator) {
+    changeLifePoints (playerId, operator) {
       this.dividing = false
-      const player = this.getPlayer(playerId)
-      const previousLifePoint = player.lifePoint
-      const inputPoint = parseInt(this.inputPoint)
+      // const player = this.getPlayer(playerId)
+      const player = this.player(playerId)
+      const previousLifePoints = player.lifePoints
+      const inputPoints = parseInt(this.inputPoints)
 
       // 増加・減少の場合は入力値が0なら計算を行わない
-      if ((operator === '+' || operator === '-') && this.inputPoint === 0) {
+      if ((operator === '+' || operator === '-') && this.inputPoints === 0) {
         return
       }
 
       // カウンターの初期値と終了値をセットする
-      const from = player.lifePoint
+      const from = player.lifePoints
       let to = 0
       const startTime = Date.now()
 
       // ライフを減少させる
       if (operator === '-') {
-        to = player.lifePoint - inputPoint
+        to = player.lifePoints - inputPoints
         // 0以下になる場合は0にする
-        if (player.lifePoint < inputPoint) {
+        if (player.lifePoints < inputPoints) {
           // オーバー値を保存
-          this.overDamagePoint.playerId = player.id
-          this.overDamagePoint.value = Math.abs(player.lifePoint - inputPoint)
+          this.overDamagePoints.playerId = player.id
+          this.overDamagePoints.value = Math.abs(player.lifePoints - inputPoints)
           to = 0
         }
       }
       // ライフを増加させる
       else if (operator === '+') {
-        to = player.lifePoint + inputPoint
+        to = player.lifePoints + inputPoints
       }
       // ライフを2分の1にする
       else if (operator == '/') {
         // 小数点以下を切り捨て
-        to = Math.floor(player.lifePoint / 2)
+        to = Math.floor(player.lifePoints / 2)
       }
       else {
         return
-      }
-
-      // ローカルストレージに記録
-      const storageData = JSON.stringify({
-        id: player.id,
-        name: player.name,
-        lifePoint: 7800,
-      })
-      if (localStorage.players) {
-        const players = JSON.parse(localStorage.players)
-        const index = players.findIndex((player) => {
-          player.id === storageData.id
-        })
-        localStorage.players.splice(index, 1, storageData)
-      } else {
-        let storageArray = []
-        storageArray.push(storageData)
-        localStorage.setItem('players', JSON.stringify(storageArray))
       }
 
       // 結果表示までの時間（ミリ秒）
@@ -445,9 +428,17 @@ export default {
         const progress = elapsedTime / duration
 
         if (progress < 1) {
-          player.lifePoint = Math.floor(from + progress * (to - from))
+          this.updatePlayer({
+            id: player.id,
+            key: 'lifePoints',
+            value: Math.floor(from + progress * (to - from)),
+          })
         } else {
-          player.lifePoint = to
+          this.updatePlayer({
+            id: player.id,
+            key: 'lifePoints',
+            value: to,
+          })
           clearInterval(timer)
         }
       })
@@ -456,54 +447,22 @@ export default {
       const log = {
         id: this.currentLogId,
         playerId: playerId,
-        previousLifePoint: previousLifePoint,
-        changeLifePoint: inputPoint,
+        previousLifePoints: previousLifePoints,
+        changeLifePoints: inputPoints,
         operator: operator,
-        currentLifePoint: player.lifePoint,
+        currentLifePoints: to,
       }
-      this.logs.push(log)
-      // this.$store.commit('addLog', log)
+      this.$store.commit('addLog', log)
       this.currentLogId++
 
       // 入力値をクリアする
       if (operator === '+' || operator === '-') {
-        this.inputPoint = 0
+        this.inputPoints = 0
       }
     },
 
 
 
-    // 1つ戻す
-    undoLogs () {
-      if (this.logs.length) {
-        let targetLog = {}
-        targetLog = this.logs[this.logs.length - 1]
-
-        const player = this.getPlayer(targetLog.playerId)
-
-        // ライフポイントを１つ前の状態に戻す
-        player.lifePoint = targetLog.previousLifePoint
-
-        // if (targetLog.operator === '+') {
-        //   player.lifePoint = player.lifePoint - targetLog.changeLifePoint
-        // } else if (targetLog.operator === '-') {
-        //   player.lifePoint = player.lifePoint + targetLog.changeLifePoint
-        // } else if (targetLog.operator === '/') {
-        //   player.lifePoint = targetLog.previousLifePoint
-        // }
-
-        this.logs.pop()
-        // this.$store.commit('removeLog')
-      }
-    },
-
-    // 別ウィンドウを開く
-    openWindow (name) {
-      const resolveRoute = this.$router.resolve({
-        name: name
-      })
-      window.open(resolveRoute.href, '_blank')
-    }
   }, /* methods */
 
 }
@@ -541,13 +500,13 @@ body {
   font-size: 26px !important;
   /* border: 1px double #fff !important; */
 }
-.lifePoint1 {
+.lifePoints1 {
     text-shadow:  2px  2px 8px crimson ,
                -2px  2px 8px crimson ,
                 2px -2px 8px crimson ,
                -2px -2px 8px crimson;
 }
-.lifePoint2 {
+.lifePoints2 {
     text-shadow:  2px  2px 8px blue ,
                -2px  2px 8px blue ,
                 2px -2px 8px blue ,
@@ -606,7 +565,7 @@ body {
       }
     }
 
-    .inputPointArea {
+    .inputPointsArea {
       $padding: 0.8rem;
       background-color: #000;
       color: #fff;
@@ -615,7 +574,7 @@ body {
       display: flex;
       flex-direction: column;
 
-      .inputPointArea-head {
+      .inputPointsArea-head {
         height: 1.5em;
         // font-size: 1rem;
         display: flex;
@@ -627,7 +586,7 @@ body {
           margin: 0;
           // font-size: 30px;
         }
-        .memoryPoint {
+        .memoryPoints {
           margin-left: $padding;
           font-size: 14px;
           opacity: 0;
@@ -659,13 +618,13 @@ body {
           }
         }
       }
-      .inputPointArea-body {
+      .inputPointsArea-body {
         display: flex;
         align-items: center;
         margin-top: auto;
         margin-bottom: auto;
 
-        .clearInputPoint {
+        .clearInputPoints {
           border-radius: 5%;
           width: 1.5em;
           height: 1.5em;
@@ -674,7 +633,7 @@ body {
           margin-left: $padding;
           border: 0px solid #000;
         }
-        .inputPoint {
+        .inputPoints {
           flex-grow: 1;
           margin: 0;
           font-size: 1.5rem;

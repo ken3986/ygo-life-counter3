@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Logs from '@/components/Logs.vue'
+// import Test from '@/views/Test.vue'
 import Calculator from '@/views/Calculator.vue'
+import Logs from '@/components/Logs.vue'
 import Bar from '@/views/Bar.vue'
 
 Vue.use(VueRouter)
@@ -19,8 +20,13 @@ const routes = [
   {
     path: '/',
     name: 'Calculator',
-    component: Calculator
+    component: Calculator,
   },
+  // {
+  //   path: '/',
+  //   name: 'Test',
+  //   component: Test,
+  // },
   {
     path: '/logs',
     name: 'Logs',
@@ -29,14 +35,21 @@ const routes = [
   {
     path: '/bar',
     name: 'Bar',
-    component: Bar
+    component: Bar,
+    meta: { title: 'ygo-life-counter-bar' }
   }
 ]
 
 const router = new VueRouter({
   mode: process.env.IS_ELECTRON ? 'hash' : 'history',
-  base: process.env.BASE_URL,
+  // mode:'hash',
+  // base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  document.title = `${to.meta.title}`;
+  next();
+});
 
 export default router

@@ -11,14 +11,18 @@
 </template>
 
 <script>
+import {
+  mapGetters,
+} from 'vuex'
+
 export default {
   name: 'Logs',
 
   props: {
-    logs: {
-      type: Array,
-      require: true,
-    }
+    // logs: {
+    //   type: Array,
+    //   require: true,
+    // }
   }, /* props */
 
   data () {
@@ -28,7 +32,9 @@ export default {
   }, /* data */
 
   computed: {
-
+    ...mapGetters({
+      logs: 'getLogs'
+    })
   }, /* computed */
 
   mounted () {
