@@ -21,6 +21,7 @@ const routes = [
     path: '/',
     name: 'Calculator',
     component: Calculator,
+    meta: { title: 'ygo-life-counter' }
   },
   // {
   //   path: '/',
@@ -30,7 +31,8 @@ const routes = [
   {
     path: '/logs',
     name: 'Logs',
-    component: Logs
+    component: Logs,
+    meta: { title: 'ygo-life-counter-logs' }
   },
   {
     path: '/bar',

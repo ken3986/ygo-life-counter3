@@ -6,7 +6,8 @@ module.exports = {
           icon: 'src/assets/img/hoshinowa-mark.png',
           target: [
             {
-              target: 'portable',
+              // target: 'portable',
+              target: 'nsis',
               arch: ['x64']
             }
           ]

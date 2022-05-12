@@ -11,35 +11,32 @@
     <div class="page-body my-4">
       <section class="life-counter">
         <div class="container">
-          <div class="row mb-2">
+          <div class="row mb-3">
 
             <div class="col-5">
               <!-- 左側プレイヤー -->
-              <div class="form-group">
+              <div class="player1">
                 <!-- プレイヤー名 -->
                 <input type="text" class="playerName form-control mb-2" :value="player(1).name" @change="updatePlayer({id:1, key:'name', value:$event.target.value})">
                 <!-- ライフポイント -->
-                <input type="text" :value="player(1).lifePoints"
-                class="lifePoints1 tt-digital form-control text-center"
-                inputmode="numeric">
+                <div class="lifePoints lifePoints1 tt-digital text-center">{{ player(1).lifePoints }}</div>
               </div>
             </div>
 
             <div class="col-2 text-center">
               <!-- リセットボタン -->
-              <button @click="resetPlayers" class="btn btn-dark mb-3"><b-icon-arrow-clockwise></b-icon-arrow-clockwise></button>
+              <button @click="resetLifePoints" class="btn btn-dark mb-3"><b-icon-arrow-clockwise></b-icon-arrow-clockwise></button>
+              <!-- アンドゥボタン -->
               <button @click="$store.dispatch('undoChange')" class="btn btn-dark"><b-icon-skip-backward></b-icon-skip-backward></button>
             </div>
 
             <div class="col-5">
               <!-- 右側プレイヤー -->
-              <div class="form-group">
+              <div class="player2">
                 <!-- プレイヤー名 -->
                 <input type="text" class="playerName form-control mb-2" :value="player(2).name" @change="updatePlayer({id:2, key:'name', value:$event.target.value})">
                 <!-- ライフポイント -->
-                <input type="text" :value="player(2).lifePoints"
-                class="lifePoints2 tt-digital form-control text-center"
-                inputmode="numeric">
+                <div class="lifePoints lifePoints2 tt-digital text-center">{{ player(2).lifePoints }}</div>
               </div>
             </div>
           </div>
@@ -499,6 +496,12 @@ body {
   letter-spacing: 0.1em;
   font-size: 26px !important;
   /* border: 1px double #fff !important; */
+}
+
+.lifePoints {
+  // height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.475rem 0.75em 0.275rem;
+  border-radius: 0.25rem;
 }
 .lifePoints1 {
     text-shadow:  2px  2px 8px crimson ,
