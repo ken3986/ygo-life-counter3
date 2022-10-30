@@ -1,11 +1,5 @@
 <template>
   <div class="page-wrapper">
-    <!-- ページヘッダー -->
-    <!-- <div class="page-header my-4">
-      <div class="container">
-        <h1 class="page-title">Life Counter</h1>
-      </div>
-    </div> -->
 
     <!-- ページボディ -->
     <div class="page-body my-4">
@@ -58,7 +52,6 @@
               <div class="inputPointsArea">
                 <div class="inputPointsArea-head">
                   <p class="memoryPoints" :class="{ active: memoryPoints }">M {{ memoryPoints }}</p>
-                  <!-- <p v-if="totalPoints">{{ totalPoints }}</p> -->
                   <div class="operators">
                     <p class="operator" :class="{ activeOperator: operator=='/' }">÷</p>
                     <p class="operator" :class="{ activeOperator: operator=='*' }">×</p>
@@ -70,8 +63,6 @@
                   <button class="clearInputPoints" @click="clearInputPoints">C</button>
                   <p class="text-right inputPoints">{{ inputPoints }}</p>
                 </div>
-                <!-- <p v-if="logs.length">{{ logs[logs.length - 1].operator }}{{ logs[logs.length - 1].changeLifePoints }}</p> -->
-                <!-- <input type="text" class="form-control text-center" inputmode="numeric" v-model.number="inputPoints"> -->
               </div>
 
               <div class="lifeOperator-buttons player2">
@@ -129,34 +120,25 @@
       </section>
 
       <!-- デバック用 -->
-      <section>
+      <!-- <section>
         <div class="container">
-          <!-- <h2>デバックエリア</h2>
-          {{ logs }} -->
-          <!-- <p>{{ playerLog(1) }}</p> -->
+          <h2>デバックエリア</h2>
+          {{ logs }}
+          <p>{{ playerLog(1) }}</p>
         </div>
-      </section>
+      </section> -->
     </div> <!-- .page-content -->
   </div> <!-- .pge-wrapper -->
 </template>
 
 
 <script>
-// import Logs from '@/components/Logs.vue'
-import {
-  // mapGetters,
-} from 'vuex'
-
 import Mixin from '@/mixins/mixin'
 
 export default {
   name: 'life-calculator',
 
   mixins: [Mixin],
-
-  components: {
-    // Logs,
-  }, /* components */
 
   data () {
     return {
@@ -213,8 +195,7 @@ export default {
   }, /* computed */
 
   mounted () {
-    console.log('outerWidth:' + window.outerWidth)
-    console.log('outerHeight:' + window.outerHeight)
+
   },
 
   methods: {
@@ -377,10 +358,9 @@ export default {
     // ライフポイントの増減
     changeLifePoints (playerId, operator) {
       this.dividing = false
-      // const player = this.getPlayer(playerId)
       const player = this.player(playerId)
       const previousLifePoints = player.lifePoints
-      const inputPoints = parseInt(this.inputPoints)
+      let inputPoints = parseInt(this.inputPoints)
 
       // 増加・減少の場合は入力値が0なら計算を行わない
       if ((operator === '+' || operator === '-') && this.inputPoints === 0) {
@@ -409,6 +389,7 @@ export default {
       }
       // ライフを2分の1にする
       else if (operator == '/') {
+        inputPoints = 2
         // 小数点以下を切り捨て
         to = Math.floor(player.lifePoints / 2)
       }
@@ -495,11 +476,9 @@ body {
   background-color: #000 !important;
   letter-spacing: 0.1em;
   font-size: 26px !important;
-  /* border: 1px double #fff !important; */
 }
 
 .lifePoints {
-  // height: calc(1.5em + 0.75rem + 2px);
   padding: 0.475rem 0.75em 0.275rem;
   border-radius: 0.25rem;
 }
@@ -545,14 +524,12 @@ body {
         .lifeOperator-button {
           $background-color: crimson;
           background-color: $background-color;
-          // border-color: darken($background-color, 10);
         }
       }
       &.player2 {
         .lifeOperator-button {
           $background-color: blue;
           background-color: $background-color;
-          // border-color: darken($background-color, 10);
         }
       }
       .lifeOperator-button {
@@ -587,7 +564,6 @@ body {
         color: #ddd;
         p {
           margin: 0;
-          // font-size: 30px;
         }
         .memoryPoints {
           margin-left: $padding;
@@ -631,8 +607,6 @@ body {
           border-radius: 5%;
           width: 1.5em;
           height: 1.5em;
-          // line-height: 20px;
-          // font-size: 1rem;
           margin-left: $padding;
           border: 0px solid #000;
         }
@@ -650,7 +624,6 @@ body {
 
 // 計算機
 .calculator {
-  // max-width: 500px;
   margin: 0 auto;
   .calculator-row {
     justify-content: space-between;

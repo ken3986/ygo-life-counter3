@@ -5,14 +5,6 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    /**
-     *  id
-        playerId
-        previousLifePoints
-        changeLifePoints
-        operator
-        currentLifePoints
-     */
     logs: [],
 
     players: [

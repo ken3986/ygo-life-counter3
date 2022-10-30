@@ -28,11 +28,9 @@ export default {
     // プレイヤーリストを取得
     const players = this.$store.getters.getPlayers
 
-    // ストレージにデータがある場合はロード
+    // ストレージからデータをロード
     players.forEach((player) => {
-      // if (localStorage.getItem('player' + player.id)) {
-        this.$store.commit('loadPlayer', {id: player.id})
-      // }
+      this.$store.commit('loadPlayer', {id: player.id})
     })
 
     // プレイヤーデータを更新したらストレージを更新
@@ -86,24 +84,6 @@ export default {
       })
     },
 
-    // // プレイヤー名を更新
-    // updateName (e, playerId) {
-    //   this.updatePlayer ({
-    //     id: playerId,
-    //     key: 'name',
-    //     value: e.target.value,
-    //   })
-    // },
-
-    // // プレイヤー名を更新
-    // updateLifePoints (e, playerId) {
-    //   this.updatePlayer ({
-    //     id: playerId,
-    //     key: 'lifePoints',
-    //     value: e.target.value,
-    //   })
-    // },
-
     // 別ウィンドウを開く
     openWindow (name ,size = { width: 400, height: 400 }) {
       const resolveRoute = this.$router.resolve({
@@ -117,7 +97,7 @@ export default {
     },
 
     openLogs () {
-      this.openWindow ('Logs', { width: 400, height: 500 })
+      this.openWindow ('Logs', { width: 460, height: 500 })
     }
   }, /* methods */
 }
