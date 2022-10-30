@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu } from 'electron'
+import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -80,33 +80,4 @@ if (isDevelopment) {
       app.quit()
     })
   }
-}
-
-// メニューバーをカスタマイズ
-function initWindowMenu () {
-  const template = [
-    {
-      label: '表示',
-      submenu: [
-        {
-          label: 'バー',
-          click () {
-            window.loadURL('')
-          }
-        }
-      ]
-    },
-    {
-      label: 'ヘルプ',
-      submenu: [
-        {
-          label: '更新情報',
-          click () {  }
-        },
-      ]
-    }
-  ]
-
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
 }

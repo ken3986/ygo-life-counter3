@@ -19,11 +19,6 @@
               inputmode="numeric">
           </div>
 
-          <!-- <div class="col-2 text-center"> -->
-            <!-- リセットボタン -->
-            <!-- <button @click="resetLifePoints" class="btn btn-dark mb-3"><b-icon-arrow-clockwise></b-icon-arrow-clockwise></button>
-            <button @click="undoLogs" class="btn btn-dark"><b-icon-skip-backward></b-icon-skip-backward></button> -->
-          <!-- </div> -->
 
           <!-- 右側プレイヤー -->
           <div class="col-3">
