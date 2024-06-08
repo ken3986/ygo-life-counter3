@@ -1,6 +1,6 @@
 {
-  "name": "ygo-life-counter3",
-  "version": "0.1.0",
+  "name": "tt-ygo-life-counter",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
