@@ -50,7 +50,7 @@ export default {
       // プレイヤー情報をリロード
       const players = this.$store.getters.getPlayers
       players.forEach((player) => {
-        if (event.key == ('player' + player.id)) {
+        if (event.key == ('tt-life-counter' + '_' + 'player' + player.id)) {
           this.$store.commit('loadPlayer', {id: player.id})
         }
       })
