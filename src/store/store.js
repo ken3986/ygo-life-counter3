@@ -68,14 +68,14 @@ export default new Vuex.Store({
     // ストレージにプレイヤー情報を書き込む
     savePlayer (state, payload) {
       const player = state.players.find((player) => player.id === payload.id)
-      const key = 'player' + player.id
+      const key = 'tt-life-counter' + '_' + 'player' + player.id
       localStorage.setItem(key, JSON.stringify(player))
     },
 
     // ストレージからプレイヤー情報を読み込む
     loadPlayer (state, payload) {
       const player = state.players.find((player) => player.id === payload.id)
-      const key = 'player' + player.id
+      const key = 'tt-life-counter' + '_' + 'player' + player.id
       if (localStorage.getItem(key)) {
         const newValue = JSON.parse(localStorage.getItem(key))
         Object.assign(player, newValue)

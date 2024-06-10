@@ -13,19 +13,19 @@ const routes = [
     path: '/',
     name: 'Calculator',
     component: Calculator,
-    meta: { title: 'ygo-life-counter' }
+    meta: { title: 'tt-life-counter' }
   },
   {
     path: '/logs',
     name: 'Logs',
     component: Logs,
-    meta: { title: 'ygo-life-counter-logs' }
+    meta: { title: 'tt-life-counter-logs' }
   },
   {
     path: '/bar',
     name: 'Bar',
     component: Bar,
-    meta: { title: 'ygo-life-counter-bar' }
+    meta: { title: 'tt-life-counter-bar' }
   }
 ]
 

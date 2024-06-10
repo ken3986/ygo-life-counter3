@@ -19,9 +19,9 @@
 
             <div class="col-2 text-center">
               <!-- リセットボタン -->
-              <button @click="resetLifePoints" class="btn btn-dark mb-3"><b-icon-arrow-clockwise></b-icon-arrow-clockwise></button>
+              <button @click="resetLifePoints" class="lifePoints-button btn btn-dark mb-2"><b-icon-arrow-clockwise></b-icon-arrow-clockwise><p class="button-subText">reset</p></button>
               <!-- アンドゥボタン -->
-              <button @click="$store.dispatch('undoChange')" class="btn btn-dark"><b-icon-skip-backward></b-icon-skip-backward></button>
+              <button @click="$store.dispatch('undoChange')" class="lifePoints-button btn btn-dark"><b-icon-skip-backward></b-icon-skip-backward><p class="button-subText">undo</p></button>
             </div>
 
             <div class="col-5">
@@ -493,6 +493,16 @@ body {
                -2px  2px 8px blue ,
                 2px -2px 8px blue ,
                -2px -2px 8px blue;
+}
+
+.button-subText {
+  font-size: 10px;
+  margin: 0;
+  margin-top: -4px;
+}
+
+.lifePoints-button {
+  height: 44px;
 }
 
 // ライフ操作
