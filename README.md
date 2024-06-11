@@ -1,2 +1,29 @@
-自作ライフカウンターアプリ（デスクトップ用）です。
+自分が欲しくて作ったライフカウンターアプリ（デスクトップ用）です。
+
 初期ライフは8000-8000。
+
+## 簡単な説明
+
+![](https://private-user-images.githubusercontent.com/171688585/338586134-b2312abc-ebc6-4475-81ff-cedabd61bf2d.jpg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTgxMDk5NTEsIm5iZiI6MTcxODEwOTY1MSwicGF0aCI6Ii8xNzE2ODg1ODUvMzM4NTg2MTM0LWIyMzEyYWJjLWViYzYtNDQ3NS04MWZmLWNlZGFiZDYxYmYyZC5qcGc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNjExJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDYxMVQxMjQwNTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hYTMwNzYyMmI2OTBhZTZkY2QwODFmNzA0ZjlhODdkOTA3MzRlMDliZTBkZjQxOWU5NmU5YmUyMmFiMWJhYTM4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.gegDV7GsZY3DtAncieI8NzwOC_6mT0fKAGJNitTyLbI)
+
+## インストール
+
+「インストール版」
+tt-life-counter Setup x.x.x.exeを実行し、お好きな場所にインストールしてください。
+
+インストールフォルダのtt-life-counter.exeから起動できます。
+
+「ポータブル版」
+ダウンロードしたtt-life-counter x.x.x.exeをそのまま実行してください。
+
+## アンインストール
+
+「インストール版」
+Uninstall tt-life-counter.exeを実行してください。
+
+「ポータブル版」
+tt-life-counter x.x.x.exeを削除してください。
+
+
+electronで作ったため、やってることと比較すると起動と容量がやや重いですが
+よろしければ使用してみてください。
